@@ -4,8 +4,24 @@
 
 <h1>Establishments:</h1>
 
-    {% for establishment in establishments %}
-        <h2>{{ establishment }}</h2>
-    {% endfor %}
+<table class="table table-striped">
+   <thead>
+       <tr>
+           <th scope="col">name</th>
+           <th scope="col">category</th>
+           <th scope="col">address</th>
+           <th scope="col">phone</th>
 
+       </tr>
+   </thead>
+   <tbody>
+       {% for establishment in establishments %}
+       <tr>
+           <td>{{ establishment.name }}</td>
+           <td>{{ establishment.category }}</td>
+
+       </tr>
+       {% endfor %}
+   </tbody>
+</table>
 {% endblock %}

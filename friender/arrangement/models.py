@@ -9,12 +9,16 @@ SEX = [
 CATEGORY = [
     ('r', 'restaurant'),
     ('c', 'cafe'),
-    ('k', 'bar')
+    ('p', 'bar')
 ]
 HOBBIES = [
-    ('s', 'sport'),
-    ('t', 'traveling'),
-
+    ('sp', 'sport'),
+    ('tr', 'traveling'),
+    ('pt', 'painting'),
+    ('cg', 'computer_games'),
+    ('sh', 'shopping'),
+    ('ph', 'photo'),
+    ('ms', 'music')
 ]
 
 
@@ -32,7 +36,7 @@ class Users(models.Model):
 
 class Passport(models.Model):
     passport_id = models.CharField(max_length=10, unique=True)
-    date_create = models.DateTimeField(auto_created=datetime)
+    date_create = models.DateTimeField(auto_created=datetime.now())
     user = models.OneToOneField('Users', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -77,4 +81,4 @@ class EstablishmentsRating(models.Model):
     establishment = models.ForeignKey('Establishments', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.establishment
+        return str(self.establishment)

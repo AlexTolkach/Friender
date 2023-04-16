@@ -1,16 +1,17 @@
 from django.shortcuts import render
+from .models import *
 
 from django.http import HttpResponse
 import datetime
 
-friends = {
-    'Max': [34, 'ma@mail.ru'],
-    'Grigory': [32, 'grigory@mail.ru'],
-    'Anna': [30, 'ann@mail.ru'],
-    'Kate': [29, 'kate@gmail.com']
-}
+# friends = {
+#     'Max': [34, 'ma@mail.ru'],
+#     'Grigory': [32, 'grigory@mail.ru'],
+#     'Anna': [30, 'ann@mail.ru'],
+#     'Kate': [29, 'kate@gmail.com']
+# }
 
-establishments = ['Butter bro', 'Terra', 'Golden Cafe', 'Depo']
+# establishments = ['Butter bro', 'Terra', 'Golden Cafe', 'Depo']
 
 
 # функция представления (вьюшка)
@@ -20,14 +21,14 @@ def main_page(request):
 
 def please_arrangements(request):
     context = {
-        "establishments": establishments,
+        "establishments": Establishments.objects.all(),
     }
     return render(request, 'establishments.html', context=context)
 
 
 def all_friends(request):
     context = {
-        "friends": friends,
+        "friends": Users.objects.all(),
     }
     return render(request, 'friends.html', context=context)
 
