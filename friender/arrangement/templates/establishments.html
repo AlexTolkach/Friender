@@ -18,8 +18,9 @@
        {% for establishment in establishments %}
        <tr>
            <td>{{ establishment.name }}</td>
-           <td>{{ establishment.category }}</td>
-
+           <td>{{ establishment.get_category_display }}</td>
+           <td>{{ establishment.address }}</td>
+           <td>{{ establishment.phone }}</td>
        </tr>
        {% endfor %}
    </tbody>

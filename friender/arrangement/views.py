@@ -28,7 +28,7 @@ def please_arrangements(request):
 
 def all_friends(request):
     context = {
-        "friends": Users.objects.all(),
+        "friends": Users.objects.all()[:100],
     }
     return render(request, 'friends.html', context=context)
 
