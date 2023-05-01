@@ -38,6 +38,8 @@ class Users(models.Model):
             models.Index(fields=['-name']),
             models.Index(fields=['-age']),
         ]
+        verbose_name = 'Пользователи'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.name
@@ -50,6 +52,7 @@ class Host(Users):
         indexes = [
             models.Index(fields=['max_spent_value']),
         ]
+        verbose_name_plural = 'Приглашающие'
 
     def __str__(self):
         return self.name
@@ -62,6 +65,7 @@ class Guest(Users):
         indexes = [
             models.Index(fields=['min_bill_value']),
         ]
+        verbose_name_plural = 'Гости'
 
     def __str__(self):
         return self.name
@@ -71,6 +75,9 @@ class Passport(models.Model):
     passport_id = models.CharField(max_length=10, unique=True)
     date_create = models.DateTimeField(auto_created=datetime.now())
     user = models.OneToOneField('Users', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Паспорт'
 
     def __str__(self):
         return self.passport_id
@@ -86,6 +93,7 @@ class Hobbies(models.Model):
             models.Index(fields=['name']),
             models.Index(fields=['-name'])
         ]
+        verbose_name_plural = 'Хобби'
 
     def __str__(self):
         return self.name
@@ -95,6 +103,9 @@ class Arrangements(models.Model):
     host = models.ForeignKey('Host', on_delete=models.CASCADE, null=True)
     guest = models.ForeignKey('Guest', on_delete=models.CASCADE, null=True)
     establishments = models.ForeignKey('Establishments', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Свидания'
 
 
 class Establishments(models.Model):
@@ -110,6 +121,7 @@ class Establishments(models.Model):
             models.Index(fields=['category']),
             models.Index(fields=['-category'])
         ]
+        verbose_name_plural = 'Заведения'
 
     def __str__(self):
         return self.name
@@ -126,6 +138,9 @@ class Rating(models.Model):
 class EstablishmentsRating(Rating):
     establishment = models.ForeignKey('Establishments', on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'Рейтинг заведений'
+
     def __str__(self):
         return str(self.establishment)
 
@@ -133,5 +148,8 @@ class EstablishmentsRating(Rating):
 class UserRating(Rating):
     user = models.ForeignKey('Users', on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'Рейтинг пользователей'
+
     def __str__(self):
-        return str(self.user)
+        return str(self.rating)

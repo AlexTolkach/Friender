@@ -28,7 +28,7 @@ def please_arrangements(request):
 
 def all_friends(request):
     context = {
-        "friends": Users.objects.all()[:100],
+        "friends": Users.objects.all().prefetch_related('hobbies_set', 'userrating_set'),
     }
     return render(request, 'friends.html', context=context)
 
