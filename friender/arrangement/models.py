@@ -20,6 +20,10 @@ HOBBIES = [
     ('ph', 'photo'),
     ('ms', 'music')
 ]
+# STATUS = [
+#     ('a', 'available')
+#     ('b', 'busy')
+# ]
 
 
 class Users(models.Model):
@@ -47,6 +51,7 @@ class Users(models.Model):
 
 class Host(Users):
     max_spent_value = models.PositiveIntegerField()
+    # STATUS = models.CharField(choices=STATUS, max_length=1, default='a')
 
     class Meta:
         indexes = [
@@ -103,6 +108,7 @@ class Arrangements(models.Model):
     host = models.ForeignKey('Host', on_delete=models.CASCADE, null=True)
     guest = models.ForeignKey('Guest', on_delete=models.CASCADE, null=True)
     establishments = models.ForeignKey('Establishments', on_delete=models.CASCADE)
+
 
     class Meta:
         verbose_name_plural = 'Свидания'

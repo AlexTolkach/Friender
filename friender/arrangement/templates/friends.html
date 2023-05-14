@@ -18,7 +18,7 @@
    <tbody>
        {% for friend in friends %}
        <tr>
-           <td>{{ friend.name }}</td>
+           <td> <a href="{% url 'user_form_rating' id=friend.id %}">{{ friend.name }}</a></td>
            <td>{{ friend.surname }}</td>
            <td>{{ friend.age }}</td>
            <td>{{ friend.city }}</td>
