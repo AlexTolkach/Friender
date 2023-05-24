@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 SEX = [
@@ -29,10 +30,16 @@ HOBBIES = [
 class Users(models.Model):
     name = models.CharField(max_length=10)
     surname = models.CharField(max_length=100)
-    age = models.IntegerField()
+    age = models.IntegerField(
+        validators=[
+            MinValueValidator(18, message='minimum age for registration is 18 years'),
+            MaxValueValidator(90, message='maximum age for registration is 90 years')
+        ]
+    )
     sex = models.CharField(max_length=1, choices=SEX)
     email = models.EmailField(null=True)
     city = models.CharField(max_length=100, default='Minsk')
+    photo = models.ImageField(upload_to='user_photo', null=True)
 
     class Meta:
         indexes = [
@@ -109,7 +116,6 @@ class Arrangements(models.Model):
     guest = models.ForeignKey('Guest', on_delete=models.CASCADE, null=True)
     establishments = models.ForeignKey('Establishments', on_delete=models.CASCADE)
 
-
     class Meta:
         verbose_name_plural = 'Свидания'
 
@@ -119,6 +125,7 @@ class Establishments(models.Model):
     category = models.CharField(max_length=1, choices=CATEGORY)
     address = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=50, null=True)
+    photo = models.ImageField(upload_to='establishment_photo', null=True)
 
     class Meta:
         indexes = [
@@ -159,3 +166,13 @@ class UserRating(Rating):
 
     def __str__(self):
         return str(self.rating)
+
+
+class Order(models.Model):
+    place = models.ForeignKey('Establishments', on_delete=models.CASCADE)
+    price = models.PositiveIntegerField()
+    date_order = models.DateTimeField(auto_created=datetime.now())
+    arrangement = models.OneToOneField('Arrangements', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Заказ'

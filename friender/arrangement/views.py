@@ -1,34 +1,35 @@
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
+from django.core.paginator import Paginator
+from django.db import transaction
 from django.http import HttpResponse
 import datetime
 
-# friends = {
-#     'Max': [34, 'ma@mail.ru'],
-#     'Grigory': [32, 'grigory@mail.ru'],
-#     'Anna': [30, 'ann@mail.ru'],
-#     'Kate': [29, 'kate@gmail.com']
-# }
-
-# establishments = ['Butter bro', 'Terra', 'Golden Cafe', 'Depo']
-
-
 # функция представления (вьюшка)
+
+
 def main_page(request):
     return render(request, 'main.html')
 
 
 def please_arrangements(request):
     context = {
-        "establishments": Establishments.objects.all(),
+        'establishments': Establishments.objects.all(),
     }
     return render(request, 'establishments.html', context=context)
 
 
 def all_friends(request):
+    users = Users.objects.all().prefetch_related('hobbies_set', 'userrating_set').order_by('name')
+    paginator = Paginator(users, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "friends": Users.objects.all().prefetch_related('hobbies_set', 'userrating_set'),
+        'friends': users,
+        'page_obj': page_obj,
     }
     return render(request, 'friends.html', context=context)
 
@@ -78,7 +79,7 @@ def user_form_rating(request, **kwargs):
 def create_user(request):
     context = {}
     if request.method == 'POST':
-        form = CreateUserForm(request.POST)
+        form = CreateUserForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('friends')
@@ -100,3 +101,25 @@ def booking_establishment_form(request):
         context['form'] = form
     return render(request, 'form_booking_establishment.html', context=context)
 
+
+def order_payment(request):
+    context = {}
+    if request.method == 'POST':
+        form = OrderPayment(request.POST)
+        context['form'] = form
+        if form.is_valid():
+            arrangement = (request.POST['arrangement'][0])
+            price = int(request.POST['price'])
+            host = Host.objects.get(arrangements=arrangement)
+            with transaction.atomic():
+                if host.max_spent_value >= price:
+                    host.max_spent_value -= price
+                    host.save()
+                    form.save()
+                else:
+                    raise ValueError('Недостаточно средств')
+                return redirect('main')
+    else:
+        form = OrderPayment(request.POST)
+        context['form'] = form
+    return render(request, 'form_order_payment.html', context=context)

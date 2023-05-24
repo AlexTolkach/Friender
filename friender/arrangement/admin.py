@@ -1,5 +1,15 @@
 from django.contrib import admin
 from .models import *
+from django.utils.safestring import mark_safe
+
+
+@admin.display(description='фото')
+def get_html_photo(objects):
+    if objects.photo:
+        return mark_safe(f'<img src={objects.photo.url} width=50>')
+
+
+get_html_photo.short_descriptions = 'фото'
 
 
 class HobbiesInline(admin.StackedInline):
@@ -15,14 +25,14 @@ def change_city(modeladmin, request, queryset):
 class UsersAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'surname', 'age', 'sex')
+            'fields': ('photo', 'name', 'surname', 'age', 'sex')
         }),
         ('Advanced options', {
             'classes': ('collapse',),
             'fields': ('email', 'city'),
         }),
     )
-    list_display = ('name', 'surname', 'age', 'sex', 'city')
+    list_display = (get_html_photo, 'name', 'surname', 'age', 'sex', 'city')
     list_display_links = ['name', 'surname']
     ordering = ['name']
     search_fields = ['age', 'sex', 'city']
@@ -51,7 +61,7 @@ class HobbiesAdmin(admin.ModelAdmin):
 
 
 class EstablishmentsAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'address', 'phone']
+    list_display = ['name', 'category', 'address', 'phone', get_html_photo]
     list_display_links = ['name']
     ordering = ['name']
     list_per_page = 10
@@ -79,6 +89,8 @@ class GuestAdmin(admin.ModelAdmin):
     pass
 
 
+
+
 admin.site.register(Users, UsersAdmin)
 admin.site.register(UserRating, UserRatingAdmin)
 admin.site.register(Hobbies, HobbiesAdmin)
@@ -88,5 +100,6 @@ admin.site.register(Passport, PassportAdmin)
 admin.site.register(Arrangements, ArrangementsAdmin)
 admin.site.register(Host, HostAdmin)
 admin.site.register(Guest, GuestAdmin)
+admin.site.register(Order)
 
 # Register your models here.

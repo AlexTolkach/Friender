@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
-from .models import Users, Arrangements
+from .models import Users, Arrangements, Order
 
 
 class RatingUserForm(forms.Form):
@@ -30,12 +30,15 @@ class CreateUserForm(forms.ModelForm):
     class Meta:
         model = Users
         exclude = ('email',)
-        validators = {'age': (MinValueValidator(18, message='minimum age for registration is 18 years'),
-                              MaxValueValidator(90, message='maximum age for registration is 90 years'))
-                      }
 
 
 class BookingEstablishmentForm(forms.ModelForm):
     class Meta:
         model = Arrangements
         fields = ('host', 'guest', 'establishments')
+
+
+class OrderPayment(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ('place', 'price', 'date_order', 'arrangement')
