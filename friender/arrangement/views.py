@@ -3,6 +3,14 @@ from .models import *
 from .forms import *
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views import View
+from django.views.generic.base import TemplateView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic.edit import CreateView, FormView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.models import Permission
 from django.http import HttpResponse
 import datetime
 
@@ -13,13 +21,8 @@ def main_page(request):
     return render(request, 'main.html')
 
 
-def please_arrangements(request):
-    context = {
-        'establishments': Establishments.objects.all(),
-    }
-    return render(request, 'establishments.html', context=context)
-
-
+@login_required(login_url="/admin/login/")
+@permission_required("arrangement.view_users", login_url="/admin/login/")
 def all_friends(request):
     users = Users.objects.all().prefetch_related('hobbies_set', 'userrating_set').order_by('name')
     paginator = Paginator(users, 5)
@@ -32,10 +35,6 @@ def all_friends(request):
         'page_obj': page_obj,
     }
     return render(request, 'friends.html', context=context)
-
-
-def rating_page(request):
-    return render(request, 'rating.html')
 
 
 def form_establishment_rating(request, **kwargs):
@@ -89,17 +88,17 @@ def create_user(request):
     return render(request, 'form_create_user.html', context=context)
 
 
-def booking_establishment_form(request):
-    context = {}
-    if request.method == 'POST':
-        form = BookingEstablishmentForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('main')
-    else:
-        form = BookingEstablishmentForm(request.POST)
-        context['form'] = form
-    return render(request, 'form_booking_establishment.html', context=context)
+# def booking_establishment_form(request):
+#     context = {}
+#     if request.method == 'POST':
+#         form = BookingEstablishmentForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('main')
+#     else:
+#         form = BookingEstablishmentForm(request.POST)
+#         context['form'] = form
+#     return render(request, 'form_booking_establishment.html', context=context)
 
 
 def order_payment(request):
@@ -123,3 +122,45 @@ def order_payment(request):
         form = OrderPayment(request.POST)
         context['form'] = form
     return render(request, 'form_order_payment.html', context=context)
+
+
+class PleaseListView(ListView):
+    template_name = "establishments.html"
+    model = Establishments
+    context_object_name = 'establishments'
+    paginate_by = 2
+
+
+class RatingTemplateView(TemplateView):
+    template_name = 'rating.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class EstablishmentsCreateView(CreateView):
+    model = Establishments
+    fields = ('name', 'category', 'address', 'phone')
+    template_name = "form_create_place.html"
+    success_url = reverse_lazy('establishments')
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["photo"] = self.request.FILES
+    #     return context
+
+
+class BookingEstablishmentForm(FormView):
+    template_name = "form_booking_establishment.html"
+    form_class = BookingEstablishmentForm
+    success_url = reverse_lazy('establishments')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class UserRatingDeleteView(DeleteView):
+    model = UserRating
+    success_url = reverse_lazy("friends")

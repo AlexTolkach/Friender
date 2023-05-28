@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
-from .models import Users, Arrangements, Order
+from .models import Users, Arrangements, Order, Establishments
 
 
 class RatingUserForm(forms.Form):
@@ -42,3 +42,9 @@ class OrderPayment(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('place', 'price', 'date_order', 'arrangement')
+
+
+class EstablishmentCreateForm(forms.ModelForm):
+    class Meta:
+        model = Establishments
+        fields = ('name', 'category', 'address', 'phone')
