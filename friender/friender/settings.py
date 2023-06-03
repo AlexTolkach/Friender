@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'arrangement',
+    'arrangement.apps.ArrangementConfig',
     'django_extensions',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
+    'friender_api.apps.FrienderApiConfig',
 ]
 
 MIDDLEWARE = [
