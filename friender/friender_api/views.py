@@ -7,12 +7,10 @@ from rest_framework import status
 from django.http import Http404
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 
 
 class EstablishmentAPIView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk):
         try:
@@ -48,7 +46,6 @@ class EstablishmentAPIView(APIView):
 
 class UserAPIView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         place = Users.objects.all()
@@ -83,14 +80,12 @@ class UserAPIView(APIView):
 #
 class EstablishmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = Establishments.objects.all()
     serializer_class = EstablishmentSerializer
 
 
 class HobbiesAPIView(generics.ListCreateAPIView):
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
 
     queryset = Hobbies.objects.all()
     serializer_class = HobbiesSerializer
