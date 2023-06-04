@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from arrangement.models import Establishments, Users, Hobbies
@@ -84,8 +85,8 @@ class EstablishmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EstablishmentSerializer
 
 
-class HobbiesAPIView(generics.ListCreateAPIView):
-    authentication_classes = [BasicAuthentication]
-
-    queryset = Hobbies.objects.all()
-    serializer_class = HobbiesSerializer
+@api_view()
+def HobbiesAPIView(request):
+    hobbies = Hobbies.objects.all()
+    serializer = HobbiesSerializer(hobbies, many=True).data
+    return Response(serializer)

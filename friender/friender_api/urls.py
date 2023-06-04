@@ -10,7 +10,6 @@ urlpatterns = [
     path('user', UserAPIView.as_view()),
     path('user/<int:pk>/', UserAPIView.as_view()),
     # path('user/<int:pk>/', UserDetailAPIView.as_view()),
-    path('hobbies', HobbiesAPIView.as_view())
+    path('hobbies', HobbiesAPIView)
 
 ]
-EstablishmentDetailAPIView
